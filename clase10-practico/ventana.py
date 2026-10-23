@@ -1,8 +1,13 @@
+import sys
 import cv2, pygame
 from datetime import datetime
 import filtros
 
-cap = cv2.VideoCapture(0)
+# En Windows, DirectShow abre y cierra la cámara sin colgarse
+if sys.platform == "win32":
+    cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+else:
+    cap = cv2.VideoCapture(0)
 if not cap.isOpened():
     print("No pude abrir la camara")
     raise SystemExit
@@ -36,7 +41,9 @@ while andando:
         if e.type == pygame.QUIT:
             andando = False
         elif e.type == pygame.KEYDOWN:
-            if e.key in FILTROS:
+            if e.key in (pygame.K_q, pygame.K_ESCAPE):
+                andando = False
+            elif e.key in FILTROS:
                 nombre, filtro = FILTROS[e.key]
             elif e.key == pygame.K_s and salida is not None:
                 archivo = datetime.now().strftime("captura_%Y%m%d_%H%M%S.png")
